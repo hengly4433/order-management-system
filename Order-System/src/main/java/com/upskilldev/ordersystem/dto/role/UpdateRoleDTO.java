@@ -2,6 +2,7 @@ package com.upskilldev.ordersystem.dto.role;
 
 import com.upskilldev.ordersystem.dto.permission.PermissionDTO;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -11,7 +12,7 @@ public class UpdateRoleDTO {
     @NotBlank(message = "Role name is required")
     private String name;
 
-    @NotBlank(message = "Permission is required")
+    @NotNull(message = "Permission is required")
     private Set<PermissionDTO> permissions;
 
     public UpdateRoleDTO() {

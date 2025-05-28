@@ -36,7 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(org.springframework.security.config.annotation.web.builders.HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                                .requestMatchers("/authenticate", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Public endpoint for authentication
+                                .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Public endpoint for authentication
 //                        .requestMatchers("/api/users/**").permitAll()
 //                        .requestMatchers("/api/roles/**").permitAll()
 //                        .requestMatchers("/api/permissions/**").permitAll()

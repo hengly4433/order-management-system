@@ -48,7 +48,7 @@ public class JwtTokenUtil {
                 .getBody();
     }
 
-    public String getToken(UserDetails userDetails) {
+    public String getGenerateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))

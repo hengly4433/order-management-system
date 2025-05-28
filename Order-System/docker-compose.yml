@@ -1,16 +1,19 @@
+version: '3.8'
+
 services:
+
   db:
     image: postgres:15-alpine
     container_name: ordersystem-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT}:5432"
+      - '${DB_PORT}:5432'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
       interval: 10s
@@ -26,26 +29,34 @@ services:
       db:
         condition: service_healthy
     environment:
-      # Spring Boot
+      # Spring profile & port
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SERVER_PORT: ${SERVER_PORT}
+      SERVER_PORT:           ${SERVER_PORT}
 
       # Database
-      DB_HOST: db
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
+      DB_HOST:     db
+      DB_PORT:     ${DB_PORT}
+      DB_NAME:     ${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
 
       # JWT
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET:        ${JWT_SECRET}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
 
+      # File-upload directory (must match application.yml key)
+      PRODUCT_IMAGE_UPLOAD_DIR: uploads/images
+
     ports:
-      - "${SERVER_PORT}:8080"
-    # bind-mount host ./logs → container /app/logs so you can view logback files
+      - '${SERVER_PORT}:8080'
+
     volumes:
+      # Persist your Spring logs
       - ./logs:/app/logs
+
+      # Persist uploaded product images
+      - ./uploads/images:/app/uploads/images
+
     restart: on-failure
 
 volumes:

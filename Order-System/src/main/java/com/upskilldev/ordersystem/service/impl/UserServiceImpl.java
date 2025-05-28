@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(createUserDTO.getUsername());
         user.setEmail(createUserDTO.getEmail());
         user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
-        Set<Role> roles = user.getRoles().stream()
+        Set<Role> roles = createUserDTO.getRoles().stream()
                         .map(rid -> roleRepository.findById(rid.getId())
                                 .orElseThrow(() -> new ResourceNotFoundException("User not found")))
                                 .collect(Collectors.toSet());

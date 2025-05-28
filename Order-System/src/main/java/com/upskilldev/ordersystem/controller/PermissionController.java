@@ -29,7 +29,7 @@ public class PermissionController {
     }
 
     @Operation(summary = "Create Permission", description = "Create a new permission")
-    @PreAuthorize("hasAuthority('CREATE_PERMISSION')")
+//    @PreAuthorize("hasAuthority('CREATE_PERMISSION')")
     @PostMapping
     public ResponseEntity<PermissionDTO> createPermission(@Valid @RequestBody CreatePermissionDTO createPermissionDTO) {
         log.info("Creating permission: {}", createPermissionDTO.getName());
