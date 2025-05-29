@@ -37,9 +37,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Public endpoint for authentication
-//                        .requestMatchers("/api/users/**").permitAll()
-//                        .requestMatchers("/api/roles/**").permitAll()
-//                        .requestMatchers("/api/permissions/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/roles/**").permitAll()
+                        .requestMatchers("/api/permissions/**").permitAll()
                                 .anyRequest().authenticated()             // All other endpoints require authentication
                 )
                 .exceptionHandling(ex -> ex

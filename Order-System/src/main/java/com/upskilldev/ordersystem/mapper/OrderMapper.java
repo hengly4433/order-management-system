@@ -13,6 +13,11 @@ public class OrderMapper {
         dto.setOrderDate(order.getOrderDate());
         dto.setStatus(order.getOrderStatus().name());
         dto.setTotal(order.getTotal());
+
+        // Customer info
+        dto.setCustomerId(order.getCustomer().getId());
+        dto.setCustomerName(order.getCustomer().getName());
+
         dto.setItems(order.getOrderItems().stream().map(item -> {
             OrderItemDetailDTO it = new OrderItemDetailDTO();
             it.setId(item.getId());

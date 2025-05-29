@@ -32,6 +32,9 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Version
+    private Integer version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -40,7 +43,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, BigDecimal price, Integer stock, String sku, Integer reorderThreshold, String imageUrl, Category category) {
+    public Product(String name, String description, BigDecimal price, Integer stock, String sku, Integer reorderThreshold, String imageUrl, Integer version, Category category) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -48,6 +51,7 @@ public class Product {
         this.sku = sku;
         this.reorderThreshold = reorderThreshold;
         this.imageUrl = imageUrl;
+        this.version = version;
         this.category = category;
     }
 
@@ -113,6 +117,14 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public Category getCategory() {

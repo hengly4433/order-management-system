@@ -25,6 +25,10 @@ public class Order {
     @Column(nullable = false)
     private BigDecimal total;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
     @OneToMany(
             mappedBy = "order",
             cascade = CascadeType.ALL,
@@ -63,6 +67,14 @@ public class Order {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public Set<OrderItem> getOrderItems() {

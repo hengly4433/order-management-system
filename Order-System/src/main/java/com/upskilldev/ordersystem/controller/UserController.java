@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @Operation(summary = "Create User", description = "Create a new user")
-//    @PreAuthorize("hasAuthority('CREATE_USER')")
+    @PreAuthorize("hasAuthority('CREATE_USER')")
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
         return ResponseEntity.ok(userService.createUser(createUserDTO));
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @Operation(summary = "Get All Users", description = "Retrieve all users")
-//    @PreAuthorize("hasAuthority('VIEW_USER')")
+    @PreAuthorize("hasAuthority('VIEW_USER')")
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());

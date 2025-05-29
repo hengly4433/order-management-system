@@ -9,6 +9,10 @@ public class OrderDTO {
     private LocalDateTime orderDate;
     private String status;
     private BigDecimal total;
+
+    private Long customerId;
+    private String customerName;
+
     private List<OrderItemDetailDTO> items;
 
     public Long getId() {
@@ -41,6 +45,22 @@ public class OrderDTO {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public List<OrderItemDetailDTO> getItems() {
