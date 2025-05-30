@@ -15,6 +15,9 @@ public class OrderDTO {
 
     private List<OrderItemDetailDTO> items;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     public Long getId() {
         return id;
     }
@@ -69,5 +72,21 @@ public class OrderDTO {
 
     public void setItems(List<OrderItemDetailDTO> items) {
         this.items = items;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

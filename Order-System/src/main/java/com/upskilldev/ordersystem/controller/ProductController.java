@@ -7,6 +7,8 @@ import com.upskilldev.ordersystem.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +21,8 @@ import java.util.List;
 @RequestMapping("/api/products")
 @Tag(name = "Product Management", description = "CRUD for Products")
 public class ProductController {
+
+    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     private final ProductService productService;
 
@@ -34,35 +38,49 @@ public class ProductController {
     )
     public ResponseEntity<ProductDTO> create(@Valid @ModelAttribute CreateProductDTO createProductDTO,
                                              @RequestPart("imageFile") MultipartFile imageFile) {
-        return ResponseEntity.ok(productService.createProduct(createProductDTO, imageFile));
+        log.info("Creating product: {} in category ID: {}", createProductDTO.getName(), createProductDTO.getCategoryId());
+        ProductDTO result = productService.createProduct(createProductDTO, imageFile);
+        log.info("Created product with ID: {}", result.getId());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "List Products")
     @PreAuthorize("hasAuthority('VIEW_PRODUCT')")
     @GetMapping
     public ResponseEntity<List<ProductDTO>> list() {
-        return ResponseEntity.ok(productService.getAllProducts());
+        log.debug("Listing all products");
+        List<ProductDTO> result = productService.getAllProducts();
+        log.info("Total products retrieved: {}", result.size());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Get Product")
     @PreAuthorize("hasAuthority('VIEW_PRODUCT')")
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> get(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+        log.debug("Retrieving product by ID: {}", id);
+        ProductDTO result = productService.getProductById(id);
+        log.info("Retrieved product: {}", result.getName());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Update Product")
     @PreAuthorize("hasAuthority('EDIT_PRODUCT')")
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody UpdateProductDTO updateProductDTO) {
-        return ResponseEntity.ok(productService.updateProduct(id, updateProductDTO));
+        log.info("Updating product ID: {}", id);
+        ProductDTO result = productService.updateProduct(id, updateProductDTO);
+        log.info("Updated product ID: {}", result.getId());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Delete Product")
     @PreAuthorize("hasAuthority('DELETE_PRODUCT')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.warn("Deleting product ID: {}", id);
         productService.deleteProduct(id);
+        log.info("Deleted product with ID: {}", id);
         return ResponseEntity.noContent().build();
     }
 }

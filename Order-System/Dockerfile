@@ -2,14 +2,13 @@
 FROM maven:3-eclipse-temurin-21-jammy AS java-builder
 WORKDIR /workspace
 
-# copy Maven wrapper & pom for faster dependency caching
-COPY mvnw .
+# copy the Maven wrapper (and make it executable) + pom for faster dependency caching
+COPY --chmod=0755 mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# go-offline to cache dependencies
-RUN chmod +x mvnw \
- && ./mvnw dependency:go-offline -B
+# go-offline to cache dependencies (no chmod needed here any more)
+RUN ./mvnw dependency:go-offline -B
 
 # copy sources and package
 COPY src ./src
@@ -21,7 +20,7 @@ LABEL maintainer="you@upskilldev.com"
 
 # create non-root user & group
 RUN groupadd -r spring \
- && useradd  -r -g spring -d /app -s /sbin/nologin spring
+ && useradd -r -g spring -d /app -s /sbin/nologin spring
 USER spring
 
 WORKDIR /app

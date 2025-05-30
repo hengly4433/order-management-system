@@ -9,6 +9,8 @@ public class CreatePermissionDTO {
 
     private String description;
 
+    private Long moduleId;
+
     public CreatePermissionDTO() {
     }
 
@@ -31,5 +33,13 @@ public class CreatePermissionDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(Long moduleId) {
+        this.moduleId = moduleId;
     }
 }

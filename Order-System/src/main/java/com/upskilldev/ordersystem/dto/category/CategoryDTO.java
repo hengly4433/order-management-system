@@ -2,6 +2,8 @@ package com.upskilldev.ordersystem.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDateTime;
+
 public class CategoryDTO {
 
     private Long id;
@@ -10,6 +12,9 @@ public class CategoryDTO {
     private String name;
 
     private String description;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public CategoryDTO() {
     }
@@ -41,5 +46,21 @@ public class CategoryDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

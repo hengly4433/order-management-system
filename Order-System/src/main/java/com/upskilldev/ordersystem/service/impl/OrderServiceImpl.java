@@ -10,6 +10,8 @@ import com.upskilldev.ordersystem.repository.CustomerRepository;
 import com.upskilldev.ordersystem.repository.OrderRepository;
 import com.upskilldev.ordersystem.repository.ProductRepository;
 import com.upskilldev.ordersystem.service.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -34,24 +38,31 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO createOrder(CreateOrderDTO createOrderDTO) {
+        log.debug("Service: Creating order for customer ID: {}", createOrderDTO.getCustomerId());
         Order order = new Order();
 
-        // **load & set customer**
+        // Load & set customer
         Customer customer = customerRepository.findById(createOrderDTO.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Customer not found: " + createOrderDTO.getCustomerId()));
+                .orElseThrow(() -> {
+                    log.error("Service: Customer not found for order, ID: {}", createOrderDTO.getCustomerId());
+                    return new ResourceNotFoundException("Customer not found: " + createOrderDTO.getCustomerId());
+                });
         order.setCustomer(customer);
 
-        // 1) Reserve stock at creation (PENDING)
+        // Reserve stock for each product item
         Set<OrderItem> items = createOrderDTO.getItems().stream().map(itemDto -> {
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found" + itemDto.getProductId()));
+                    .orElseThrow(() -> {
+                        log.error("Service: Product not found for order item, ID: {}", itemDto.getProductId());
+                        return new ResourceNotFoundException("Product not found: " + itemDto.getProductId());
+                    });
 
             int qty = itemDto.getQuantity();
             if (product.getStock() < qty) {
+                log.error("Service: Not enough stock for product {}, requested: {}, available: {}", product.getName(), qty, product.getStock());
                 throw new ResourceNotFoundException(
-                    "Cannot place order: only " + product.getStock() +
-                            " unit of " + product.getName() + " available, but you want " + qty
+                        "Cannot place order: only " + product.getStock() +
+                                " unit of " + product.getName() + " available, but you want " + qty
                 );
             }
 
@@ -74,20 +85,25 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderItems(items);
         order.setOrderStatus(OrderStatus.PENDING);
 
-        // 2) Compute total
+        // Compute total
         BigDecimal total = items.stream()
                 .map(OrderItem::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         order.setTotal(total);
 
-        // 3) Save with status = PENDING (default)
-        return OrderMapper.toDTO(orderRepository.save(order));
+        OrderDTO dto = OrderMapper.toDTO(orderRepository.save(order));
+        log.info("Service: Order created with ID: {}", dto.getId());
+        return dto;
     }
 
     @Override
     public OrderDTO updateStatus(Long orderId, UpdateOrderStatusDTO orderStatus) {
+        log.debug("Service: Updating status for order ID: {} to {}", orderId, orderStatus.getStatus());
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found" + orderId));
+                .orElseThrow(() -> {
+                    log.error("Service: Order not found for update, ID: {}", orderId);
+                    return new ResourceNotFoundException("Order not found: " + orderId);
+                });
 
         OrderStatus oldStatus = order.getOrderStatus();
         OrderStatus newStatus = OrderStatus.valueOf(orderStatus.getStatus());
@@ -103,6 +119,7 @@ public class OrderServiceImpl implements OrderService {
                         (oldStatus == OrderStatus.CANCELLED && newStatus == OrderStatus.CANCELLED) ||
                         (oldStatus == OrderStatus.COMPLETED && newStatus == OrderStatus.COMPLETED);
         if (!valid) {
+            log.error("Service: Invalid order status transition from {} to {} for order ID: {}", oldStatus, newStatus, orderId);
             throw new ResourceNotFoundException(
                     "Cannot transition order from " + oldStatus + " to " + newStatus);
         }
@@ -119,29 +136,44 @@ public class OrderServiceImpl implements OrderService {
 
         // On COMPLETED: nothing to do (stock already reserved)
         order.setOrderStatus(newStatus);
-        return OrderMapper.toDTO(orderRepository.save(order));
+        OrderDTO dto = OrderMapper.toDTO(orderRepository.save(order));
+        log.info("Service: Updated status for order ID: {} to {}", dto.getId(), dto.getStatus());
+        return dto;
     }
 
     @Override
     public void deleteOrder(Long orderId) {
+        log.warn("Service: Deleting order ID: {}", orderId);
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found" + orderId));
+                .orElseThrow(() -> {
+                    log.error("Service: Order not found for delete, ID: {}", orderId);
+                    return new ResourceNotFoundException("Order not found: " + orderId);
+                });
         orderRepository.delete(order);
+        log.info("Service: Deleted order ID: {}", orderId);
     }
 
     @Override
     public OrderDTO getOrderById(Long orderId) {
-        return OrderMapper.toDTO(
-                orderRepository.findById(orderId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Order not found" + orderId))
-        );
+        log.debug("Service: Retrieving order by ID: {}", orderId);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> {
+                    log.error("Service: Order not found, ID: {}", orderId);
+                    return new ResourceNotFoundException("Order not found: " + orderId);
+                });
+        OrderDTO dto = OrderMapper.toDTO(order);
+        log.info("Service: Retrieved order ID: {}", orderId);
+        return dto;
     }
 
     @Override
     public List<OrderDTO> getAllOrders() {
-        return orderRepository.findAll()
+        log.debug("Service: Retrieving all orders");
+        List<OrderDTO> orders = orderRepository.findAll()
                 .stream()
                 .map(OrderMapper::toDTO)
                 .collect(Collectors.toList());
+        log.info("Service: Total orders retrieved: {}", orders.size());
+        return orders;
     }
 }

@@ -29,52 +29,72 @@ public class UserController {
     }
 
     @Operation(summary = "Create User", description = "Create a new user")
-    @PreAuthorize("hasAuthority('CREATE_USER')")
+//    @PreAuthorize("hasAuthority('CREATE_USER')")
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
-        return ResponseEntity.ok(userService.createUser(createUserDTO));
+        log.info("Creating user: {}", createUserDTO.getUsername());
+        UserDTO result = userService.createUser(createUserDTO);
+        log.info("Created user with ID: {}", result.getId());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Get User", description = "Retrieve a user by ID")
-    @PreAuthorize("hasAuthority('VIEW_USER')")
+//    @PreAuthorize("hasAuthority('VIEW_USER')")
     @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getUserById(userId));
+        log.debug("Retrieving user by ID: {}", userId);
+        UserDTO result = userService.getUserById(userId);
+        log.info("Retrieved user: {}", result.getUsername());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Get All Users", description = "Retrieve all users")
-    @PreAuthorize("hasAuthority('VIEW_USER')")
+//    @PreAuthorize("hasAuthority('VIEW_USER')")
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        log.debug("Listing all users");
+        List<UserDTO> result = userService.getAllUsers();
+        log.info("Total users retrieved: {}", result.size());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Update User", description = "Update an existing user")
-    @PreAuthorize("hasAuthority('EDIT_USER')")
+//    @PreAuthorize("hasAuthority('EDIT_USER')")
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
-        return ResponseEntity.ok(userService.updateUser(userId, updateUserDTO));
+        log.info("Updating user ID: {}", userId);
+        UserDTO result = userService.updateUser(userId, updateUserDTO);
+        log.info("Updated user ID: {}", result.getId());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Delete User", description = "Delete a user by ID")
-    @PreAuthorize("hasAuthority('DELETE_USER')")
+//    @PreAuthorize("hasAuthority('DELETE_USER')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        log.warn("Deleting user ID: {}", userId);
         userService.deleteUser(userId);
+        log.info("Deleted user with ID: {}", userId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Assign Role To User", description = "Adds additional roles to a user without removing existing roles")
-    @PreAuthorize("hasAuthority('ASSIGN_ROLE_TO_USER')")
+//    @PreAuthorize("hasAuthority('ASSIGN_ROLE_TO_USER')")
     @PostMapping("/{userId}/roles/assign")
     public ResponseEntity<UserDTO> assignRoleToUser(@PathVariable Long userId, @RequestBody List<Long> roleIds) {
-        return ResponseEntity.ok(userService.assignRoleToUser(userId, roleIds));
+        log.info("Assigning roles {} to user ID: {}", roleIds, userId);
+        UserDTO result = userService.assignRoleToUser(userId, roleIds);
+        log.info("Assigned roles to user ID: {}", userId);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Remove Role From User", description = "Removes specific roles from a user")
-    @PreAuthorize("hasAuthority('REMOVE_ROLE_FROM_USER')")
+//    @PreAuthorize("hasAuthority('REMOVE_ROLE_FROM_USER')")
     @PostMapping("/{userId}/roles")
     public ResponseEntity<UserDTO> removeRoleFromUser(@PathVariable Long userId, @RequestBody List<Long> roleIds) {
-        return ResponseEntity.ok(userService.removeRoleFromUsers(userId, roleIds));
+        log.info("Removing roles {} from user ID: {}", roleIds, userId);
+        UserDTO result = userService.removeRoleFromUsers(userId, roleIds);
+        log.info("Removed roles from user ID: {}", userId);
+        return ResponseEntity.ok(result);
     }
 }

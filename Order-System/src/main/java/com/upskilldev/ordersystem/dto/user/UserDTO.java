@@ -4,6 +4,7 @@ import com.upskilldev.ordersystem.dto.role.RoleDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class UserDTO {
@@ -16,6 +17,9 @@ public class UserDTO {
     private String email;
 
     private Set<RoleDTO> roles;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public UserDTO() {
     }
@@ -56,5 +60,21 @@ public class UserDTO {
 
     public void setRoles(Set<RoleDTO> roles) {
         this.roles = roles;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

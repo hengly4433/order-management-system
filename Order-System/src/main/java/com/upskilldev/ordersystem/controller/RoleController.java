@@ -24,51 +24,67 @@ public class RoleController {
 
     private final RoleService roleService;
 
-
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
 
     @Operation(summary = "Create Role", description = "Create a new role")
-    @PreAuthorize("hasAuthority('CREATE_PERMISSION')")
+//    @PreAuthorize("hasAuthority('CREATE_ROLE')")
     @PostMapping
     public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody CreateRoleDTO createRoleDTO) {
-        return ResponseEntity.ok(roleService.createRole(createRoleDTO));
+        log.info("Creating role: {}", createRoleDTO.getName());
+        RoleDTO result = roleService.createRole(createRoleDTO);
+        log.info("Created role with ID: {}", result.getId());
+        return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "Get Rol", description = "Retrieve role by ID")
-    @PreAuthorize("hasAuthority('VIEW_ROLE')")
+    @Operation(summary = "Get Role", description = "Retrieve role by ID")
+//    @PreAuthorize("hasAuthority('VIEW_ROLE')")
     @GetMapping("/{roleId}")
     public ResponseEntity<RoleDTO> getRoleById(@PathVariable Long roleId) {
-        return ResponseEntity.ok(roleService.getRoleById(roleId));
+        log.debug("Retrieving role by ID: {}", roleId);
+        RoleDTO result = roleService.getRoleById(roleId);
+        log.info("Retrieved role: {}", result.getName());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Get Roles", description = "Retrieve all roles")
-    @PreAuthorize("hasAuthority('VIEW_ROLE')")
+//    @PreAuthorize("hasAuthority('VIEW_ROLE')")
     @GetMapping
     public ResponseEntity<List<RoleDTO>> getAllRoles() {
-        return ResponseEntity.ok(roleService.getAllRoles());
+        log.debug("Listing all roles");
+        List<RoleDTO> result = roleService.getAllRoles();
+        log.info("Total roles retrieved: {}", result.size());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Update Role", description = "Update an existing role")
-    @PreAuthorize("hasAuthority('EDIT_ROLE')")
+//    @PreAuthorize("hasAuthority('EDIT_ROLE')")
     @PutMapping("/{roleId}")
     public ResponseEntity<RoleDTO> updateRole(@PathVariable Long roleId, @Valid @RequestBody UpdateRoleDTO updateRoleDTO) {
-        return ResponseEntity.ok(roleService.updateRole(roleId, updateRoleDTO));
+        log.info("Updating role ID: {}", roleId);
+        RoleDTO result = roleService.updateRole(roleId, updateRoleDTO);
+        log.info("Updated role ID: {}", result.getId());
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Delete Role", description = "Delete a role by ID")
-    @PreAuthorize("hasAuthority('DELETE_ROLE')")
+//    @PreAuthorize("hasAuthority('DELETE_ROLE')")
     @DeleteMapping("/{roleId}")
     public ResponseEntity<Void> deleteRole(@PathVariable Long roleId) {
+        log.warn("Deleting role ID: {}", roleId);
         roleService.deleteRole(roleId);
+        log.info("Deleted role with ID: {}", roleId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Assign Permissions", description = "Assign permissions to a role")
-    @PreAuthorize("hasAuthority('ASSIGN_PERMISSION_TO_ROLE')")
+//    @PreAuthorize("hasAuthority('ASSIGN_PERMISSION_TO_ROLE')")
     @PostMapping("/{roleId}/permissions")
     public ResponseEntity<RoleDTO> assignPermissionToRole(@PathVariable Long roleId, @RequestBody List<Long> permissionIds) {
-        return ResponseEntity.ok(roleService.assignPermissionsToRole(roleId, permissionIds));
+        log.info("Assigning permissions {} to role ID: {}", permissionIds, roleId);
+        RoleDTO result = roleService.assignPermissionsToRole(roleId, permissionIds);
+        log.info("Assigned permissions to role ID: {}", roleId);
+        return ResponseEntity.ok(result);
     }
 }

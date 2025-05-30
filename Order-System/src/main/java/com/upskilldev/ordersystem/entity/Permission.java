@@ -1,6 +1,9 @@
 package com.upskilldev.ordersystem.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "permissions")
@@ -13,6 +16,16 @@ public class Permission {
     private String name;
 
     private String description;
+
+    @ManyToOne(optional = true)               // allow NULLs
+    @JoinColumn(name = "module_id", nullable = true)
+    private Modules module;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @CreationTimestamp
+    private LocalDateTime updatedAt;
 
     public Permission() {
     }
@@ -44,5 +57,29 @@ public class Permission {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Modules getModule() {
+        return module;
+    }
+
+    public void setModule(Modules module) {
+        this.module = module;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

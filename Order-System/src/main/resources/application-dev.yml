@@ -1,0 +1,17 @@
+spring:
+  devtools:
+    restart:
+      enabled: true       # turn on DevTools restart
+      poll-interval: 1000 # check every 1s for changed classes
+      quiet-period: 400   # wait 400ms after change before restarting
+    livereload:
+      enabled: true       # optional: live‐reload static resources in the browser
+
+# any other “dev” overrides go here:
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.upskilldev.ordersystem: DEBUG

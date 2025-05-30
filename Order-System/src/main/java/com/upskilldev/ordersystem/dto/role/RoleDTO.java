@@ -3,6 +3,7 @@ package com.upskilldev.ordersystem.dto.role;
 import com.upskilldev.ordersystem.dto.permission.PermissionDTO;
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class RoleDTO {
@@ -12,6 +13,9 @@ public class RoleDTO {
     private String name;
 
     private Set<PermissionDTO> permissions;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public RoleDTO() {
     }
@@ -43,5 +47,21 @@ public class RoleDTO {
 
     public void setPermissions(Set<PermissionDTO> permissions) {
         this.permissions = permissions;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

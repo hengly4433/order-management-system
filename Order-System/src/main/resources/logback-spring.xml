@@ -3,8 +3,6 @@
 
     <property name="LOG_PATH" value="./logs"/>
     <property name="MAX_HISTORY" value="30"/>
-
-    <!-- Pattern for logs -->
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
 
     <!-- Console appender -->
@@ -14,7 +12,7 @@
         </encoder>
     </appender>
 
-    <!-- Rolling file appender for all INFO+ logs -->
+    <!-- File appender for all logs -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -26,7 +24,7 @@
         </encoder>
     </appender>
 
-    <!-- Separate error file -->
+    <!-- File appender for errors only -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -41,7 +39,7 @@
         </encoder>
     </appender>
 
-    <!-- User action logger for auditing (if needed) -->
+    <!-- (Optional) Audit/user action appender -->
     <appender name="USER_ACTION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/user_action.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -60,15 +58,15 @@
         <appender-ref ref="ERROR_FILE"/>
     </root>
 
-    <!-- Custom logger for user actions (example) -->
+    <!-- Application logger -->
+    <logger name="com.upskilldev.ordersystem" level="DEBUG"/>
+
+    <!-- Optional: user action logger -->
     <logger name="USER_ACTION_LOGGER" level="INFO" additivity="false">
         <appender-ref ref="USER_ACTION_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Reduce Spring noise -->
+    <!-- Silence noisy Spring logs -->
     <logger name="org.springframework" level="WARN"/>
-
-    <!-- Show DEBUG for your application -->
-    <logger name="com.upskilldev.ordersystem" level="DEBUG"/>
 </configuration>

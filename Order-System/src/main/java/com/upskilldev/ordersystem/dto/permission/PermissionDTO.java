@@ -2,6 +2,8 @@ package com.upskilldev.ordersystem.dto.permission;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDateTime;
+
 public class PermissionDTO {
     private Long id;
 
@@ -9,6 +11,12 @@ public class PermissionDTO {
     private String name;
 
     private String description;
+    private Long moduleId;
+    private String moduleName;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
 
     public PermissionDTO() {
     }
@@ -40,5 +48,37 @@ public class PermissionDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(Long moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

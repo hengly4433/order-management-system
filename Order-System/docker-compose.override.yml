@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  app:
+    image: maven:3-eclipse-temurin-21-jammy
+    container_name: ordersystem-app-dev
+    working_dir: /workspace
+
+    # 1) No 'clean', 2) run in same JVM, 3) dev profile
+    command: >
+      mvn spring-boot:run
+        -Dspring-boot.run.profiles=dev
+        -Dspring-boot.run.fork=false
+
+    volumes:
+      # Your project root (includes pom.xml, src/, etc.)
+      - ./:/workspace
+
+      # Maven cache
+      - ~/.m2:/root/.m2
+
+      # Make sure DevTools can see your compiled classes
+      - ./target/classes:/workspace/target/classes
+      - ./target/resources:/workspace/target/resources
+
+      # Persist logs and uploads
+      - ./logs:/workspace/logs
+      - ./uploads/images:/workspace/uploads/images
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SERVER_PORT:           ${SERVER_PORT}
+      DB_HOST:               db
+      DB_PORT:               ${DB_PORT}
+      DB_NAME:               ${DB_NAME}
+      DB_USERNAME:           ${DB_USERNAME}
+      DB_PASSWORD:           ${DB_PASSWORD}
+      JWT_SECRET:            ${JWT_SECRET}
+      JWT_EXPIRATION_MS:     ${JWT_EXPIRATION_MS}
+      PRODUCT_IMAGE_UPLOAD_DIR: uploads/images
+
+    ports:
+      - '${SERVER_PORT}:8080'
+
+    depends_on:
+      db:
+        condition: service_healthy

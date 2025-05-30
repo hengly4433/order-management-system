@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     private final CustomerRepository customerRepository;
 
@@ -30,41 +30,62 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDTO createCustomer(CreateCustomerDTO createCustomerDTO) {
+        log.debug("Service: Creating customer: {}", createCustomerDTO.getName());
         Customer customer = CustomerMapper.toEntity(createCustomerDTO);
         customer = customerRepository.save(customer);
-        log.info("Created Customer : {}", customer.getId());
-        return CustomerMapper.toDTO(customer);
+        CustomerDTO dto = CustomerMapper.toDTO(customer);
+        log.info("Service: Customer created with ID: {}", dto.getId());
+        return dto;
     }
 
     @Override
     public CustomerDTO updateCustomer(Long customerId, UpdateCustomerDTO updateCustomerDTO) {
+        log.debug("Service: Updating customer ID: {}", customerId);
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + customerId + " not found"));
+                .orElseThrow(() -> {
+                    log.error("Service: Customer not found for update, ID: {}", customerId);
+                    return new ResourceNotFoundException("Customer with id " + customerId + " not found");
+                });
         CustomerMapper.updateEntity(updateCustomerDTO, customer);
         customer = customerRepository.save(customer);
-        log.info("Updated Customer : {}", customerId);
-        return CustomerMapper.toDTO(customer);
+        CustomerDTO dto = CustomerMapper.toDTO(customer);
+        log.info("Service: Updated customer ID: {}", dto.getId());
+        return dto;
     }
 
     @Override
     public void deleteCustomer(Long customerId) {
+        log.warn("Service: Deleting customer ID: {}", customerId);
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + customerId + " not found"));
-        log.info("Deleted Customer : {}", customerId);
+                .orElseThrow(() -> {
+                    log.error("Service: Customer not found for delete, ID: {}", customerId);
+                    return new ResourceNotFoundException("Customer with id " + customerId + " not found");
+                });
         customerRepository.delete(customer);
+        log.info("Service: Deleted customer ID: {}", customerId);
     }
 
     @Override
     public CustomerDTO getCustomerById(Long customerId) {
-        return CustomerMapper.toDTO(customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + customerId + " not found")));
+        log.debug("Service: Retrieving customer by ID: {}", customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> {
+                    log.error("Service: Customer not found, ID: {}", customerId);
+                    return new ResourceNotFoundException("Customer with id " + customerId + " not found");
+                });
+        CustomerDTO dto = CustomerMapper.toDTO(customer);
+        log.info("Service: Retrieved customer ID: {}", customerId);
+        return dto;
     }
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
-        return customerRepository.findAll()
+        log.debug("Service: Retrieving all customers");
+        List<CustomerDTO> customers = customerRepository.findAll()
                 .stream()
                 .map(CustomerMapper::toDTO)
                 .collect(Collectors.toList());
+        log.info("Service: Total customers retrieved: {}", customers.size());
+        return customers;
     }
 }
